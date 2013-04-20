@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>SystemWrapper</id>
+    <version>0.4</version>
+    <title>SystemWrapper</title>
+    <authors>Vadim Kreynin</authors>
+    <owners>Vadim Kreynin</owners>
+    <licenseUrl>http://systemwrapper.codeplex.com/license</licenseUrl>
+    <projectUrl>http://systemwrapper.codeplex.com/</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>SystemWrapper is a library that wraps .NET classes for system resources like System.IO.FileInfo, System.Reflection.Assembly, and many other classes so you can easily mock them.</description>
+    <summary>SystemWrapper is a library that wraps .NET classes for system resources like System.IO.FileInfo, System.Reflection.Assembly, and many other classes so you can easily mock them.</summary>
+    <releaseNotes />
+    <copyright />
+    <language />
+    <tags>.net systemwrapper mock "unit testing" TDD MockObjects</tags>
+    <references>
+      <reference file="SystemWrapper.dll" />
+    </references>
+  </metadata>
+</package>
