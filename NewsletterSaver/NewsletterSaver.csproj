@@ -56,12 +56,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IMail.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="Tests\ConfigTest.cs" />
     <Compile Include="MailReader.cs" />
+    <Compile Include="IMessage.cs" />
     <Compile Include="Tests\IPop3Client.cs" />
     <Compile Include="Tests\MailReaderTest.cs" />
   </ItemGroup>
