@@ -57,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ContentsTypes.cs" />
+    <Compile Include="HTMLLocalSaver.cs" />
     <Compile Include="IMailFilter.cs" />
     <Compile Include="IMessageHeader.cs" />
     <Compile Include="IStructuredMessage.cs" />
@@ -66,6 +67,7 @@
     <Compile Include="Tests\ConfigTest.cs" />
     <Compile Include="MailReader.cs" />
     <Compile Include="IMessage.cs" />
+    <Compile Include="Tests\HTMLLocalSaverTest.cs" />
     <Compile Include="Tests\IPop3Client.cs" />
     <Compile Include="Tests\MailReaderTest.cs" />
     <Compile Include="Tests\MessagerSaverTest.cs" />
