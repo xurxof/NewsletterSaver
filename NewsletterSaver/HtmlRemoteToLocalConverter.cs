@@ -89,9 +89,4 @@ namespace NewsletterSaver {
            return  _BinaryReferences.FirstOrDefault(b => b.OriginalLink == originalLink) != null;
         }
     }
-
-    public interface IInMemoryDoc {
-        string Text { get; }
-        IEnumerable<BinaryReference> BinaryReferences { get; }
-    }
 }
