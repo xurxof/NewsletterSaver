@@ -35,6 +35,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="HtmlAgilityPack">
+      <HintPath>..\packages\HtmlAgilityPack.1.4.6\lib\Net40\HtmlAgilityPack.dll</HintPath>
+    </Reference>
     <Reference Include="Moq">
       <HintPath>..\packages\Moq.4.0.10827\lib\NET40\Moq.dll</HintPath>
     </Reference>
@@ -56,13 +59,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BinaryReferences.cs" />
+    <Compile Include="BinaryReference.cs" />
     <Compile Include="ContentsTypes.cs" />
+    <Compile Include="document.cs" />
     <Compile Include="HTMLLocalSaver.cs" />
     <Compile Include="HtmlRemoteToLocalConverter.cs" />
     <Compile Include="IMailFilter.cs" />
     <Compile Include="IMessageHeader.cs" />
     <Compile Include="IStructuredMessage.cs" />
+    <Compile Include="IWebFacade.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Config.cs" />

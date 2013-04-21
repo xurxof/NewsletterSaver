@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Moq;
 using NUnit.Framework;
 
 namespace NewsletterSaver.Tests {
@@ -8,9 +9,9 @@ namespace NewsletterSaver.Tests {
         [Test]
         public void Convert_NullText_ReturnsEmptyDoc() {
             // arrange
-            HtmlRemoteToLocalConverter Converter = new HtmlRemoteToLocalConverter();
+            HtmlRemoteToLocalConverter Converter = new HtmlRemoteToLocalConverter(null);
             // action
-            var MemoryDoc = Converter.Convert(null);
+            var MemoryDoc = Converter.Convert(null, null);
             // assert
             Assert.IsNull(MemoryDoc.Text);
             Assert.AreEqual(0, MemoryDoc.BinaryReferences.Count());
@@ -20,14 +21,33 @@ namespace NewsletterSaver.Tests {
         [Test]
         public void Convert_NoLocableLinks_ReturnsNoLocableReferences() {
             // arrange
-            HtmlRemoteToLocalConverter Converter = new HtmlRemoteToLocalConverter();
+            HtmlRemoteToLocalConverter Converter = new HtmlRemoteToLocalConverter(null);
             string SimpleHtml = @"<!DOCTYPE html><html><body><h1>My First Heading</h1><p>My first paragraph.</p></body></html>";
             // action
-            var MemoryDoc = Converter.Convert(SimpleHtml);
+            var MemoryDoc = Converter.Convert(SimpleHtml, "document.html");
             // assert
             Assert.AreEqual(SimpleHtml,MemoryDoc.Text);
             Assert.AreEqual(0, MemoryDoc.BinaryReferences.Count());
         }
-	  
+
+        [Test]
+        public void Convert_RemoteImagesLinks_ReturnsBinaryReferences() {
+            Mock<IWebFacade> Web = new Mock<IWebFacade>();
+
+            HtmlRemoteToLocalConverter Converter = new HtmlRemoteToLocalConverter(Web.Object);
+            byte[] Image = new[] {(byte)3, (byte)2};
+            Web.Setup(w => w.GetBinaryRemoteFile("w3schools.jpg")).Returns(Image);
+            string SimpleHtml = @"<!DOCTYPE html><html><body><h1>My First Heading</h1><p>My first paragraph.</p><img src=""w3schools.jpg"" width=""104"" height=""142""></body></body></html>";
+            
+            // action
+            var MemoryDoc = Converter.Convert(SimpleHtml, "document.html");
+            // assert
+            Assert.AreEqual(SimpleHtml, MemoryDoc.Text);
+            Assert.AreEqual(1, MemoryDoc.BinaryReferences.Count());
+            Assert.AreEqual(@"\document files\w3schools.jpg", MemoryDoc.BinaryReferences.First().NewLocalLink);
+            Assert.AreEqual("w3schools.jpg", MemoryDoc.BinaryReferences.First().OriginalLink);
+            Assert.AreSame(Image, MemoryDoc.BinaryReferences.First().BinaryValue);
+        }
+
     }
 }
