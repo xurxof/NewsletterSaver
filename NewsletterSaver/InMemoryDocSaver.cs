@@ -13,8 +13,8 @@ namespace NewsletterSaver {
                 return false;
             }
             _FileWrap.WriteAllText(filePath, doc.Text);
-            foreach (BinaryReference reference in doc.BinaryReferences) {
-                _FileWrap.WriteAllBytes(reference.NewLocalLink, reference.BinaryValue);
+            foreach (BinaryReference Reference in doc.BinaryReferences) {
+                _FileWrap.WriteAllBytes(Reference.NewRealtiveLocalLink, Reference.BinaryValue);
             }
             return true;
         }

@@ -18,23 +18,23 @@ namespace NewsletterSaver.Tests {
         [Test]
         public void Save_TextIsNull_DoNothingReturnFalse() {
             // arrange
-            var file = new Mock<IFileWrap>(MockBehavior.Strict);
+            var File = new Mock<IFileWrap>(MockBehavior.Strict);
             string MainFilePath = "c:\tmp\file.txt";
             string MainFileContent = "blabla";
             string ImageFilePath = "c:\tmp\files\file.jpg";
             var ImageContent = new byte[] {5, 6};
-            file.Setup(f => f.WriteAllText(MainFilePath, MainFileContent));
+            File.Setup(f => f.WriteAllText(MainFilePath, MainFileContent));
 
-            file.Setup(f => f.WriteAllBytes(ImageFilePath, ImageContent));
-            InMemoryDocSaver Saver = new InMemoryDocSaver(file.Object);
-            InMemoryDoc doc = new InMemoryDoc(MainFileContent);
-            doc.AddBinaryReference(new BinaryReference(null, ImageFilePath, ImageContent));
+            File.Setup(f => f.WriteAllBytes(ImageFilePath, ImageContent));
+            InMemoryDocSaver Saver = new InMemoryDocSaver(File.Object);
+            InMemoryDoc Doc = new InMemoryDoc(MainFileContent);
+            Doc.AddBinaryReference(new BinaryReference(null, ImageFilePath, ImageContent));
             // action
-            bool Saved = Saver.Save(doc, MainFilePath);
+            bool Saved = Saver.Save(Doc, MainFilePath);
             // assert
             Assert.IsTrue(Saved);
-            file.Verify(f => f.WriteAllText(MainFilePath, MainFileContent), Times.Once());
-            file.Verify(f => f.WriteAllBytes(ImageFilePath, ImageContent), Times.Once());
+            File.Verify(f => f.WriteAllText(MainFilePath, MainFileContent), Times.Once());
+            File.Verify(f => f.WriteAllBytes(ImageFilePath, ImageContent), Times.Once());
         }
     }
 }

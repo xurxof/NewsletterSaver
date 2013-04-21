@@ -1,12 +1,12 @@
 namespace NewsletterSaver {
     public sealed class BinaryReference {
         private readonly string _OriginalLink;
-        private readonly string _NewLocalLink;
+        private readonly string _LocalFilename;
         private readonly byte[] _BinaryValue;
 
-        public BinaryReference(string originalLink, string newLocalLink, byte[] binaryValue) {
+        public BinaryReference(string originalLink, string localFileName, byte[] binaryValue) {
             _OriginalLink = originalLink;
-            _NewLocalLink = newLocalLink;
+            _LocalFilename = localFileName;
             _BinaryValue = binaryValue;
         }
 
@@ -16,9 +16,9 @@ namespace NewsletterSaver {
             }
         }
 
-        public string NewLocalLink {
+        public string NewRealtiveLocalLink {
             get {
-                return _NewLocalLink;
+                return _LocalFilename;
             }
         }
 
