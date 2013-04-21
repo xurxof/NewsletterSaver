@@ -56,8 +56,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ContentsTypes.cs" />
     <Compile Include="IMailFilter.cs" />
     <Compile Include="IMessageHeader.cs" />
+    <Compile Include="IStructuredMessage.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Config.cs" />
