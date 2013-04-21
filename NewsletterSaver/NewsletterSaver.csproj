@@ -66,6 +66,8 @@
     <Compile Include="IMessage.cs" />
     <Compile Include="Tests\IPop3Client.cs" />
     <Compile Include="Tests\MailReaderTest.cs" />
+    <Compile Include="Tests\MessagerSaverTest.cs" />
+    <Compile Include="MessageSaver.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
