@@ -1,9 +1,10 @@
 using System.Collections.Generic;
+using NewsletterSaver.Tests;
 
-namespace NewsletterSaver.Tests {
-    internal class MailReader {
+namespace NewsletterSaver {
+    internal sealed class MailReader {
         public IEnumerable<IMail> GetUnreadMails() {
-            return new List<IMail> ();
+            return new List<IMail>();
         }
     }
 }

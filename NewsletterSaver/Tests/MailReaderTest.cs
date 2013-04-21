@@ -5,13 +5,13 @@ using NUnit.Framework;
 
 namespace NewsletterSaver.Tests {
     [TestFixture]
-    internal class MailReaderTest {
+    internal sealed class MailReaderTest {
         [Test]
         public void GetUnreadMails_IfNotUnreadMailExists_ReturnsEmptyEnumeration() {
-            MailReader reader = new MailReader();
-            Mock<IPop3Client> popClient = new Mock<IPop3Client>();
-            popClient.Setup(p => p.GetMessageCount()).Returns(0);
-            IEnumerable<IMail>  Emails = reader.GetUnreadMails();
+            MailReader Reader = new MailReader();
+            Mock<IPop3Client> PopClient = new Mock<IPop3Client>();
+            PopClient.Setup(p => p.GetMessageCount()).Returns(0);
+            IEnumerable<IMail>  Emails = Reader.GetUnreadMails();
             Assert.AreEqual(0, Emails.Count());
 
         }

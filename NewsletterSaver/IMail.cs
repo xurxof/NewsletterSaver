@@ -1,3 +1,3 @@
-namespace NewsletterSaver.Tests {
+namespace NewsletterSaver {
     internal interface IMail {}
 }
