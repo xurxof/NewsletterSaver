@@ -56,6 +56,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BinaryReferences.cs" />
     <Compile Include="ContentsTypes.cs" />
     <Compile Include="HTMLLocalSaver.cs" />
     <Compile Include="HtmlRemoteToLocalConverter.cs" />
