@@ -14,22 +14,45 @@ namespace NewsletterSaver {
             if (htmlString == null) {
                 return new InMemoryDoc();
             }
-            string RelativeFilder = "\\" + Path.GetFileNameWithoutExtension(futureFileName) + " files\\";
+            // TODO: create path and file calculator for this kind of lines
+            string RelativeFolder = "\\" + Path.GetFileNameWithoutExtension(futureFileName) + " files\\";
             InMemoryDoc ReturnValue = new InMemoryDoc(htmlString);
             HtmlDocument Doc = new HtmlDocument();
             Doc.LoadHtml(htmlString);
-            var Nodes = Doc.DocumentNode.Descendants("img");
-
-            foreach (HtmlNode Node in Nodes) {
-                string Atrb = Node.GetAttributeValue("src", null);
-                string FileName = Path.GetFileName(Atrb);
-                var BinaryValue = _WebFacade.GetBinaryRemoteFile(Atrb);
-
-                string NewLocalLink = RelativeFilder + FileName;
-                Node.SetAttributeValue("src", NewLocalLink);
-                ReturnValue.AddBinaryReference(new BinaryReference(Atrb, NewLocalLink, BinaryValue));
+            foreach (HtmlNode Node in GetNodes(Doc)) {
+                ValuesFromNode Values = ExtractValuesFromNode(Node, RelativeFolder);
+                Node.SetAttributeValue("src", Values.NewLocalLink);
+                var BinaryReference = new BinaryReference(Values.AtributeValue, Values.NewLocalLink, Values.BinaryValue);
+                ReturnValue.AddBinaryReference(BinaryReference);
             }
             return ReturnValue;
+        }
+
+        private IEnumerable<HtmlNode>  GetNodes(HtmlDocument doc) {
+            return doc.DocumentNode.Descendants("img");
+        }
+
+        private ValuesFromNode ExtractValuesFromNode(HtmlNode node, string relativeFilder) {
+            string Atrb = node.GetAttributeValue("src", null);
+            string FileName = Path.GetFileName(Atrb);
+            var BinaryValue = _WebFacade.GetBinaryRemoteFile(Atrb);
+
+            string NewLocalLink = relativeFilder + FileName;
+            return new ValuesFromNode(Atrb, BinaryValue, NewLocalLink);
+        }
+    }
+
+    internal sealed class ValuesFromNode {
+        public string AtributeValue { get; private set; }
+
+        public byte[] BinaryValue { get; private set; }
+        public string NewLocalLink { get; private set; }
+
+        public ValuesFromNode(string atributeValue, byte[] binaryValue, string newLocalLink) {
+            AtributeValue = atributeValue;
+
+            BinaryValue = binaryValue;
+            NewLocalLink = newLocalLink;
         }
     }
 
