@@ -1,3 +1,3 @@
 ﻿namespace NewsletterSaver {
-    public interface IMessage {}
+    public interface IMessage { IMessageHeader GetMessageHeaders(int mesaggerNumber);}
 }
