@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using HtmlAgilityPack;
 
 namespace NewsletterSaver {
@@ -21,7 +22,10 @@ namespace NewsletterSaver {
             Doc.LoadHtml(htmlString);
             foreach (HtmlNode Node in GetNodes(Doc)) {
                 ValuesFromNode Values = ExtractValuesFromNode(Node, RelativeFolder);
+                
                 Node.SetAttributeValue("src", Values.NewLocalLink);
+                if (ReturnValue.ContainsBinaryReference(Values.AtributeValue))
+                    continue;
                 var BinaryReference = new BinaryReference(Values.AtributeValue, Values.NewLocalLink, Values.BinaryValue);
                 ReturnValue.AddBinaryReference(BinaryReference);
             }
@@ -79,6 +83,10 @@ namespace NewsletterSaver {
 
         internal void AddBinaryReference(BinaryReference binaryReference) {
             _BinaryReferences.Add(binaryReference);
+        }
+
+        internal bool ContainsBinaryReference(string originalLink) {
+           return  _BinaryReferences.FirstOrDefault(b => b.OriginalLink == originalLink) != null;
         }
     }
 
