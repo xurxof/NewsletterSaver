@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using SystemWrapper;
+using Moq;
 using NUnit.Framework;
 
 namespace NewsletterSaver.Tests {
@@ -8,11 +11,18 @@ namespace NewsletterSaver.Tests {
         [Test]
         public void GetUnreadMails_IfNotUnreadMailExists_ReturnsEmptyEnumeration() {
 
-            Pop3ClientFake PopClient = new Pop3ClientFake();
-            MailReader Reader = new MailReader(PopClient, new MailFilterFake());
-            IEnumerable<IMessage> Emails = Reader.GetUnreadMails();
+            Pop3ClientStub PopClient = new Pop3ClientStub();
+            var dateTime = GetDateTimeStrub("01/01/2013");
+            MailReader Reader = new MailReader(PopClient, new MailFilterFake(), dateTime.Object);
+            IEnumerable<IMessage> Emails = Reader.GetUnreadMails(null);
             Assert.AreEqual(0, Emails.Count());
 
+        }
+
+        private static Mock<IDateTimeWrap> GetDateTimeStrub(string dateTime) {
+            Mock<IDateTimeWrap> DateTimeStrub = new Mock<IDateTimeWrap>();
+            DateTimeStrub.Setup(d => d.Now.DateTimeInstance).Returns(DateTime.Parse(dateTime));
+            return DateTimeStrub;
         }
 
 
@@ -20,9 +30,10 @@ namespace NewsletterSaver.Tests {
         public void GetUnreadMail_ThereAreOneMail_ReturnsTheMail() {
             string ValidEmail = "pepejuan@gmail.com";
             var MessageFake = new MessageFake(ValidEmail);
-            Pop3ClientFake PopClient = new Pop3ClientFake(MessageFake);
-            MailReader Reader = new MailReader(PopClient, new MailFilterFake(ValidEmail));
-            IEnumerable<IMessage> Emails = Reader.GetUnreadMails().ToList();
+            Pop3ClientStub PopClient = new Pop3ClientStub(MessageFake);
+            var dateTime = GetDateTimeStrub("01/01/2013");
+            MailReader Reader = new MailReader(PopClient, new MailFilterFake(ValidEmail), dateTime.Object);
+            IEnumerable<IMessage> Emails = Reader.GetUnreadMails(null).ToList();
             Assert.AreEqual(1, Emails.Count());
             Assert.AreSame(MessageFake, Emails.First());
         }
@@ -32,30 +43,29 @@ namespace NewsletterSaver.Tests {
             // arrange
             string ValidFrom = "pepejuan@gmail.com";
             var ValidMessageFake = new MessageFake(ValidFrom);
-            Pop3ClientFake PopClient = new Pop3ClientFake(ValidMessageFake, new MessageFake("other@gmail.com"));
-            MailReader Reader = new MailReader(PopClient, new MailFilterFake(ValidFrom));
+            Pop3ClientStub PopClient = new Pop3ClientStub(ValidMessageFake, new MessageFake("other@gmail.com"));
+
+            var dateTime = GetDateTimeStrub("01/01/2013");
+            MailReader Reader = new MailReader(PopClient, new MailFilterFake(ValidFrom), dateTime.Object);
             // action
-            IEnumerable<IMessage> Emails = Reader.GetUnreadMails().ToList();
+            IEnumerable<IMessage> Emails = Reader.GetUnreadMails(null).ToList();
             // assert
             Assert.AreEqual(1, Emails.Count());
             Assert.AreSame(ValidMessageFake, Emails.First());
         }
 
 
-        private sealed class Pop3ClientFake:IPop3Client {
+        private sealed class Pop3ClientStub:IMailClient {
             private readonly List<IMessage> _InnerList = new List<IMessage>();
-            public Pop3ClientFake(params IMessage[] mesagge) {
+            public Pop3ClientStub(params IMessage[] mesagge) {
                 foreach (var Message in mesagge) {
                     _InnerList.Add(Message);
                 }
                 
             }
-            public int GetMessageCount() {
-                return _InnerList.Count();
-            }
-
-            public IMessage GetMessage(int messageNumber) {
-                return _InnerList[messageNumber - 1];
+            
+            public IEnumerable<IMessage> GetMessagesAfter(DateTime minDateTime) {
+                return _InnerList.AsEnumerable();
             }
         }
         private sealed class MessageFake : IMessage {
@@ -65,7 +75,7 @@ namespace NewsletterSaver.Tests {
                 _From =fromHeader;
             }
 
-            public IMessageHeader GetMessageHeaders(int mesaggerNumber) {
+            public IMessageHeader GetMessageHeaders() {
                 return new MessageHeaderFake(_From);
             }
         }

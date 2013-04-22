@@ -1,33 +1,28 @@
+using System;
+using System.Linq;
 using System.Collections.Generic;
+using SystemWrapper;
 using NewsletterSaver.Tests;
 
 namespace NewsletterSaver {
     internal sealed class MailReader {
-        private readonly IPop3Client _Client;
+        private readonly IMailClient _Client;
         private readonly IMailFilter _Filter;
+        private readonly IDateTimeWrap _DateTime;
 
-        public MailReader(IPop3Client client, IMailFilter filter) {
+        public MailReader(IMailClient client, IMailFilter filter, IDateTimeWrap dateTime) {
             _Client = client;
             _Filter = filter;
+            _DateTime = dateTime;
         }
 
-        public IEnumerable<IMessage> GetUnreadMails() {
-            int MessageCount = _Client.GetMessageCount();
-            if (MessageCount == 0) {
-                return new List<IMessage>();
-            }
-            return FillMessageList(MessageCount);
-        }
-
-        private IEnumerable<IMessage> FillMessageList(int messageCount) {
-            var Mails = new List<IMessage>();
-            for (int I = messageCount; I > 0; I--) {
-                IMessage Message = _Client.GetMessage(I);
-                if (_Filter.IsHeaderAccepted(Message.GetMessageHeaders(I))) {
-                    Mails.Add(Message);
-                }
-            }
-            return Mails;
+        public IEnumerable<IMessage> GetUnreadMails(DateTime? datetime) {
+            DateTime DateTimeFilter;
+            if (!datetime.HasValue)
+                DateTimeFilter = _DateTime.Now.DateTimeInstance.AddHours(-24);
+            else
+                DateTimeFilter = datetime.Value;
+            return _Client.GetMessagesAfter(DateTimeFilter).Where(m=>_Filter.IsHeaderAccepted( m.GetMessageHeaders()));
         }
     }
 }

@@ -35,6 +35,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AE.Net.Mail">
+      <HintPath>..\packages\AE.Net.Mail.1.7.8.0\lib\net40\AE.Net.Mail.dll</HintPath>
+    </Reference>
     <Reference Include="HtmlAgilityPack">
       <HintPath>..\packages\HtmlAgilityPack.1.4.6\lib\Net40\HtmlAgilityPack.dll</HintPath>
     </Reference>
@@ -43,9 +46,6 @@
     </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
-    </Reference>
-    <Reference Include="OpenPop">
-      <HintPath>..\packages\OpenPop.NET.2.0.4.369\lib\net20\OpenPop.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -61,7 +61,6 @@
   <ItemGroup>
     <Compile Include="BinaryReference.cs" />
     <Compile Include="ContentsTypes.cs" />
-    <Compile Include="document.cs" />
     <Compile Include="IInMemoryDoc.cs" />
     <Compile Include="InMemoryDocSaver.cs" />
     <Compile Include="HtmlRemoteToLocalConverter.cs" />
@@ -77,7 +76,7 @@
     <Compile Include="IMessage.cs" />
     <Compile Include="Tests\InMemoryDocSaverTest.cs" />
     <Compile Include="Tests\HtmlRemoteToLocalConverterTest.cs" />
-    <Compile Include="Tests\IPop3Client.cs" />
+    <Compile Include="IMailClient.cs" />
     <Compile Include="Tests\MailReaderTest.cs" />
     <Compile Include="Tests\MessagerSaverTest.cs" />
     <Compile Include="MessageSaver.cs" />
@@ -86,7 +85,9 @@
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="tdd.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
