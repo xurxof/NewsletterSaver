@@ -21,6 +21,20 @@ namespace NewsletterSaver.Tests {
 
 
         [Test]
+        public void Read_IfFileIsEmpty_ReturnsNull() {
+            // arrange
+
+            var Application = GetApllicationMock();
+            var File = GetFileWrapMock(false);
+            File.Setup(s => s.ReadAllLines(@"C:\archivos de programa\test\maxdate.txt")).Returns(new string[] {});
+            InternalConfigManager Manager = new InternalConfigManager(File.Object, Application.Object);
+            // action
+            var Date = Manager.GetMaxDate();
+            // assert
+            Assert.IsNull(Date);
+        }
+
+        [Test]
         public void Read_IfFileExists_ReturnsDate() {
             // arrange
             var File = GetFileWrapMock(true);

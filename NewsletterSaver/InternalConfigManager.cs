@@ -5,17 +5,20 @@ using SystemWrapper.IO;
 namespace NewsletterSaver {
     internal sealed class InternalConfigManager {
         private readonly IFileWrap _FileWrap;
-        private readonly IApplicationWrap _DirectoryWrap;
+        private readonly string _MaxDateFilePath;
+        private const string InternalConfigFilename = "maxdate.txt";
 
         public InternalConfigManager(IFileWrap fileWrap, IApplicationWrap directoryWrap) {
             _FileWrap = fileWrap;
-            _DirectoryWrap = directoryWrap;
+            _MaxDateFilePath = Path.Combine(directoryWrap.ExecutablePath, InternalConfigFilename);
         }
 
+
         internal DateTime? GetMaxDate() {
-            var MaxDateFilePath = Path.Combine(_DirectoryWrap.ExecutablePath, "maxdate.txt");
-            if (!_FileWrap.Exists(MaxDateFilePath)) return null;
-            return DateTime.Parse(_FileWrap.ReadAllLines(MaxDateFilePath)[0]);
+            if (!_FileWrap.Exists(_MaxDateFilePath)) {
+                return null;
+            }
+            return DateTime.Parse(_FileWrap.ReadAllLines(_MaxDateFilePath)[0]);
         }
     }
 }
