@@ -66,6 +66,7 @@
     <Compile Include="HtmlRemoteToLocalConverter.cs" />
     <Compile Include="IMailFilter.cs" />
     <Compile Include="IMessageHeader.cs" />
+    <Compile Include="InternalConfigManager.cs" />
     <Compile Include="IStructuredMessage.cs" />
     <Compile Include="IWebFacade.cs" />
     <Compile Include="Program.cs" />
@@ -74,9 +75,12 @@
     <Compile Include="Tests\ConfigTest.cs" />
     <Compile Include="MailReader.cs" />
     <Compile Include="IMessage.cs" />
+    <Compile Include="Tests\IApplication.cs" />
+    <Compile Include="IApplicationWrap.cs" />
     <Compile Include="Tests\InMemoryDocSaverTest.cs" />
     <Compile Include="Tests\HtmlRemoteToLocalConverterTest.cs" />
     <Compile Include="IMailClient.cs" />
+    <Compile Include="Tests\InternalConfigManagerTest.cs" />
     <Compile Include="Tests\MailReaderTest.cs" />
     <Compile Include="Tests\MessagerSaverTest.cs" />
     <Compile Include="MessageSaver.cs" />
