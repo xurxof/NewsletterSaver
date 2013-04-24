@@ -20,5 +20,10 @@ namespace NewsletterSaver {
             }
             return DateTime.Parse(_FileWrap.ReadAllLines(_MaxDateFilePath)[0]);
         }
+
+        internal bool SaveDate(DateTime maxDate) {
+            _FileWrap.WriteAllText(_MaxDateFilePath, maxDate.ToShortDateString());
+            return true;
+        }
     }
 }

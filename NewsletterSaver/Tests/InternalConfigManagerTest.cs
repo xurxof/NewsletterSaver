@@ -48,6 +48,25 @@ namespace NewsletterSaver.Tests {
             Assert.AreEqual(DateTime.Parse("07/08/2013 00:00"), Date.Value);
         }
 
+
+
+        [Test]
+        public void Save_WhenEnds_SaveMaxDate() {
+            // arrange
+            var File = GetFileWrapMock(true);
+            var Application = GetApllicationMock();
+
+            File.Setup(s => s.WriteAllLines(@"C:\archivos de programa\test\maxdate.txt",new [] {@"07/08/2013"}));
+            InternalConfigManager Manager = new InternalConfigManager(File.Object, Application.Object);
+            DateTime DateTimeToSave = DateTime.Parse("07/08/2013");
+            // action
+            bool Saved = Manager.SaveDate(DateTimeToSave);
+            // assert
+            Assert.IsTrue(Saved);
+            File.Verify (m=>m.WriteAllText(@"C:\archivos de programa\test\maxdate.txt",@"07/08/2013"), Times.Once ());
+            
+        }
+
         private static Mock<IApplicationWrap> GetApllicationMock() {
             var Application = new Mock<IApplicationWrap>();
             Application.Setup(d => d.ExecutablePath).Returns(@"C:\archivos de programa\test\");
