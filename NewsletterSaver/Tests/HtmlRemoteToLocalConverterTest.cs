@@ -11,7 +11,7 @@ namespace NewsletterSaver.Tests {
             // arrange
             HtmlRemoteToLocalConverter Converter = new HtmlRemoteToLocalConverter(null);
             // action
-            var MemoryDoc = Converter.Convert(null);
+            var MemoryDoc = Converter.Convert(null, @"C:\tmp");
             // assert
             Assert.IsNull(MemoryDoc.Text);
             Assert.AreEqual(0, MemoryDoc.BinaryReferences.Count());
@@ -24,7 +24,7 @@ namespace NewsletterSaver.Tests {
             HtmlRemoteToLocalConverter Converter = new HtmlRemoteToLocalConverter(null);
             string SimpleHtml = @"<!DOCTYPE html><html><body><h1>My First Heading</h1><p>My first paragraph.</p></body></html>";
             // action
-            var MemoryDoc = Converter.Convert(SimpleHtml);
+            var MemoryDoc = Converter.Convert(SimpleHtml, @"C:\tmp");
             // assert
             Assert.AreEqual(SimpleHtml,MemoryDoc.Text);
             Assert.AreEqual(0, MemoryDoc.BinaryReferences.Count());
@@ -40,11 +40,11 @@ namespace NewsletterSaver.Tests {
             string SimpleHtml = @"<!DOCTYPE html><html><body><h1>My First Heading</h1><p>My first paragraph.</p><img src=""w3schools.jpg"" width=""104"" height=""142""></body></body></html>";
             
             // action
-            var MemoryDoc = Converter.Convert(SimpleHtml);
+            var MemoryDoc = Converter.Convert(SimpleHtml, @"C:\tmp");
             // assert
             Assert.AreEqual(SimpleHtml, MemoryDoc.Text);
             Assert.AreEqual(1, MemoryDoc.BinaryReferences.Count());
-            Assert.AreEqual(@"w3schools.jpg", MemoryDoc.BinaryReferences.First().NewRealtiveLocalLink);
+            Assert.AreEqual(@"C:\tmp\w3schools.jpg", MemoryDoc.BinaryReferences.First().NewLocalLink);
             Assert.AreEqual("w3schools.jpg", MemoryDoc.BinaryReferences.First().OriginalLink);
             Assert.AreSame(Image, MemoryDoc.BinaryReferences.First().BinaryValue);
         }
@@ -58,11 +58,11 @@ namespace NewsletterSaver.Tests {
             string SimpleHtml = @"<!DOCTYPE html><html><body><h1>My First Heading</h1><p>My first paragraph.</p><img src=""w3schools.jpg"" width=""104"" height=""142""><img src=""w3schools.jpg"" width=""104"" height=""142""></body></body></html>";
 
             // action
-            var MemoryDoc = Converter.Convert(SimpleHtml);
+            var MemoryDoc = Converter.Convert(SimpleHtml, @"C:\tmp");
             // assert
             Assert.AreEqual(SimpleHtml, MemoryDoc.Text);
             Assert.AreEqual(1, MemoryDoc.BinaryReferences.Count());
-            Assert.AreEqual(@"w3schools.jpg", MemoryDoc.BinaryReferences.First().NewRealtiveLocalLink);
+            Assert.AreEqual(@"C:\tmp\w3schools.jpg", MemoryDoc.BinaryReferences.First().NewLocalLink);
             Assert.AreEqual("w3schools.jpg", MemoryDoc.BinaryReferences.First().OriginalLink);
             Assert.AreSame(Image, MemoryDoc.BinaryReferences.First().BinaryValue);
         }

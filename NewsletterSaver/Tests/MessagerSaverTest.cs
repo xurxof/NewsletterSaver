@@ -9,11 +9,11 @@ namespace NewsletterSaver.Tests {
         public void Save_NotMailPasessed_DoNothingReturnNull() {
             // arrange
             var File = new Mock<IFileWrap>(MockBehavior.Strict); // avoid method calls of file 
-            MessageSaver Saver = new MessageSaver(File.Object);
+            MessageSaver Saver = new MessageSaver(File.Object,null, null, null);
             // action
-            string FileName = Saver.Save(null);
+            string[] FileName = Saver.Save(null);
             // assert
-            Assert.IsNull(FileName);
+            Assert.AreEqual(0,FileName.Length);
         }
 
 
@@ -24,18 +24,18 @@ namespace NewsletterSaver.Tests {
             string Content = "blablabla";
             var File = new Mock<IFileWrap>();
 
-            MessageSaver Saver = new MessageSaver(File.Object, @"C:\", new PathWrap());
-            var TextMessageStub = new Mock<IStructuredMessage>();
+            MessageSaver Saver = new MessageSaver(File.Object, @"C:\", new PathWrap(),null);
+            var TextMessageStub = new Mock<IMessage>();
 
             TextMessageStub.Setup(m => m.Title).Returns(Titulo);
 
             TextMessageStub.Setup(m => m.Text).Returns(Content);
-            TextMessageStub.Setup(m => m.Content).Returns(ContentsTypes.Text);
+            TextMessageStub.Setup(m => m.IsHtml).Returns(false);
             // action
-            string FileName = Saver.Save(TextMessageStub.Object);
+            string[] FileNames = Saver.Save(new [] {TextMessageStub.Object});
             // assert
             string Filepath = @"C:\titulo__.txt";
-            Assert.AreEqual(Filepath, FileName);
+            Assert.AreEqual(Filepath, FileNames[0]);
             File.Verify(f => f.WriteAllText(Filepath, Content), Times.Once());
         }
     }

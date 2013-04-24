@@ -1,16 +1,16 @@
-﻿
-using System.Collections.Specialized;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace NewsletterSaver {
     public sealed class MailFilter : IMailFilter {
-        private StringCollection _Froms;
-        public MailFilter(params string [] froms) {
-            _Froms = new StringCollection();
-            _Froms.AddRange(froms);
+        private readonly IEnumerable<string> _Froms;
+
+        public MailFilter(params string[] froms) {
+            _Froms = froms.Where(f => !string.IsNullOrWhiteSpace(f));
         }
 
-        public bool IsHeaderAccepted(IMessageHeader header) {
-            return _Froms.Contains(header.From);
+        public bool IsMessageAccepted(IMessage message) {
+            return _Froms.Any(f => f == message.From || f == message.Sender);
         }
     }
 }

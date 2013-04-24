@@ -1,3 +1,3 @@
 namespace NewsletterSaver {
-    internal interface IMailFilter { bool IsHeaderAccepted(IMessageHeader iMessageHeader);}
+    internal interface IMailFilter { bool IsMessageAccepted(IMessage message);}
 }

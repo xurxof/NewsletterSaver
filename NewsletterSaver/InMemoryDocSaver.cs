@@ -14,7 +14,7 @@ namespace NewsletterSaver {
             }
             _FileWrap.WriteAllText(filePath, doc.Text);
             foreach (BinaryReference Reference in doc.BinaryReferences) {
-                _FileWrap.WriteAllBytes(Reference.NewRealtiveLocalLink, Reference.BinaryValue);
+                _FileWrap.WriteAllBytes(Reference.NewLocalLink, Reference.BinaryValue);
             }
             return true;
         }

@@ -10,7 +10,7 @@ namespace NewsletterSaver {
 
         public InternalConfigManager(IFileWrap fileWrap, IApplicationWrap directoryWrap) {
             _FileWrap = fileWrap;
-            _MaxDateFilePath = Path.Combine(directoryWrap.ExecutablePath, InternalConfigFilename);
+            _MaxDateFilePath = Path.Combine(Path.GetDirectoryName(directoryWrap.ExecutablePath), InternalConfigFilename);
         }
 
 
@@ -18,11 +18,14 @@ namespace NewsletterSaver {
             if (!_FileWrap.Exists(_MaxDateFilePath)) {
                 return null;
             }
-            return DateTime.Parse(_FileWrap.ReadAllLines(_MaxDateFilePath)[0]);
+            var Line = _FileWrap.ReadAllLines(_MaxDateFilePath)[0];
+
+            return DateTime.Parse(Line, System.Globalization.CultureInfo.InvariantCulture);
         }
 
         internal bool SaveDate(DateTime maxDate) {
-            _FileWrap.WriteAllText(_MaxDateFilePath, maxDate.ToShortDateString());
+
+            _FileWrap.WriteAllText(_MaxDateFilePath, maxDate.ToString(System.Globalization.CultureInfo.InvariantCulture));
             return true;
         }
     }

@@ -1,25 +1,30 @@
-﻿namespace NewsletterSaver {
-    public sealed class Message : IMessage {
-        private readonly MessageHeader _Header;
+﻿using System;
 
+namespace NewsletterSaver {
+    public struct Message : IMessage {
         private readonly string _Title;
-
         private readonly string _Text;
+        private readonly DateTime? _Date;
+        private readonly string _Sender;
+        private readonly bool _IsHtml;
+        private readonly string _From;
 
-
-        private readonly ContentsTypes _Content;
-
-        public Message(string from, string title, string text, ContentsTypes content) {
+        public Message(string @from, string title, string text, DateTime date, string sender, bool isHtml) {
             _Title = title;
             _Text = text;
-            _Content = content;
-            _Header = new MessageHeader(from);
+            _Date = date;
+            _Sender = sender;
+            _IsHtml = isHtml;
+            _From = from;
+        }
+        
+        
+        public string From {
+            get {
+                return _From;
+            }
         }
 
-
-        IMessageHeader IMessage.GetMessageHeader() {
-            return _Header;
-        }
 
         public string Title {
             get {
@@ -33,10 +38,21 @@
             }
         }
 
-
-        public ContentsTypes Content {
+        public DateTime? Date {
             get {
-                return _Content;
+                return _Date;
+            }
+        }
+
+        public string Sender {
+            get {
+                return _Sender;
+            }
+        }
+
+        public bool IsHtml {
+            get {
+                return _IsHtml;
             }
         }
     }

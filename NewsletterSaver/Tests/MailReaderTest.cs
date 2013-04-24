@@ -71,12 +71,48 @@ namespace NewsletterSaver.Tests {
         private sealed class MessageFake : IMessage {
             private readonly string _From;
 
+            
             public MessageFake  (string fromHeader) {
                 _From =fromHeader;
             }
 
-            public IMessageHeader GetMessageHeaders() {
-                return new MessageHeaderFake(_From);
+        
+
+            public bool IsHtml {
+                get {
+                    return false;
+                }
+            }
+
+
+            public string From {
+                get {
+                    return _From;
+                }
+            }
+
+            public string Title {
+                get {
+                    return "title";
+                }
+            }
+
+            public string Text {
+                get {
+                    return "";
+                }
+            }
+
+            public DateTime? Date {
+                get {
+                    return null;
+                }
+            }
+
+            public string Sender {
+                get {
+                    return "";
+                }
             }
         }
         
@@ -90,23 +126,10 @@ namespace NewsletterSaver.Tests {
             _Valid=validFrom;
         }
 
-        public bool IsHeaderAccepted(IMessageHeader iMessageHeader) {
-            return iMessageHeader.From == _Valid;
+        public bool IsMessageAccepted(IMessage message) {
+            return message.From == _Valid;
         }
     }
 
-    internal sealed class MessageHeaderFake : IMessageHeader {
-        private readonly string _From;
-
-        public MessageHeaderFake(string fromHeader) {
-            _From = fromHeader;
-        }
-
-        public string From {
-            get {
-                return _From;
-            }
-        }
-
-    }
+    
 }

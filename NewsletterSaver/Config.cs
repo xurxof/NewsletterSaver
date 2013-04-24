@@ -5,19 +5,24 @@ using SystemWrapper.IO;
 namespace NewsletterSaver {
     internal sealed class Config {
         private readonly List<string> _FromFilter;
-        private string _PopPass;
+        private string _ImapPass;
         private string _SavePath;
-        private string _PopUser;
-        private int _PopPort;
-        private bool _PopUseSSL;
-        private string _PopHost;
+        private string _ImapUser;
+        private int _ImapPort;
+        private bool _ImapUseSSL;
+        private string _ImapHost;
 
 
         public Config(string fileName, IFileWrap fileReader) {
             _FromFilter = new List<string>();
-            var Lineas = fileReader.ReadAllLines(fileName);
-            foreach (string Linea in Lineas) {
-                var KeyValue = ExtractKeyValue(Linea);
+            if(!fileReader.Exists(fileName)) {
+                var DefaultConfigStrings = new[] {"imapUser:pepejuan@gmail.com", "imapPass:password", "imapHost:imap.gmail.com", "imapPort:993", "imapUseSSL:true", @"savePath:c:\mails\", "fromFilter:uno@blabla.com", "fromFilter:dos@blabla.com", "fromFilter:tres@blabla.com"};
+                fileReader.WriteAllLines(fileName, DefaultConfigStrings);
+            }
+            var Lines = fileReader.ReadAllLines(fileName);
+            foreach (string Line in Lines) {
+                if (string.IsNullOrWhiteSpace(Line)) continue;
+                var KeyValue = ExtractKeyValue(Line);
                 SetPropertyValue(KeyValue.Item1, KeyValue.Item2);
             }
         }
@@ -35,22 +40,22 @@ namespace NewsletterSaver {
         private void SetPropertyValue(string key, string value) {
             switch (key) {
                 case "imapPass":
-                    _PopPass = value;
+                    _ImapPass = value;
                     break;
                 case "imapPort":
-                    _PopPort = int.Parse(value);
+                    _ImapPort = int.Parse(value);
                     break;
                 case "savePath":
                     _SavePath = value;
                     break;
                 case "imapUser":
-                    _PopUser = value;
+                    _ImapUser = value;
                     break;
                 case "imapHost":
-                    _PopHost = value;
+                    _ImapHost = value;
                     break;
                 case "imapUseSSL":
-                    _PopUseSSL = bool.Parse(value);
+                    _ImapUseSSL = bool.Parse(value);
                     break;
                 case "fromFilter":
                     _FromFilter.Add(value);
@@ -58,15 +63,15 @@ namespace NewsletterSaver {
             }
         }
 
-        public string PopPass {
+        public string ImapPass {
             get {
-                return _PopPass;
+                return _ImapPass;
             }
         }
 
-        public int PopPort {
+        public int ImapPort {
             get {
-                return _PopPort;
+                return _ImapPort;
             }
         }
 
@@ -82,21 +87,21 @@ namespace NewsletterSaver {
             }
         }
 
-        public string PopUser {
+        public string ImapUser {
             get {
-                return _PopUser;
+                return _ImapUser;
             }
         }
 
-        public string PopHost {
+        public string ImapHost {
             get {
-                return _PopHost;
+                return _ImapHost;
             }
         }
 
-        public bool PopUseSSL {
+        public bool ImapUseSSL {
             get {
-                return _PopUseSSL;
+                return _ImapUseSSL;
             }
         }
     }

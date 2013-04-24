@@ -11,7 +11,7 @@ namespace NewsletterSaver {
             _WebFacade = webRequest;
         }
 
-        public IInMemoryDoc Convert(string htmlString) {
+        public IInMemoryDoc Convert(string htmlString, string newDirectoryName) {
             if (htmlString == null) {
                 return new InMemoryDoc();
             }
@@ -19,7 +19,7 @@ namespace NewsletterSaver {
             HtmlDocument Doc = new HtmlDocument();
             Doc.LoadHtml(htmlString);
             foreach (HtmlNode Node in GetNodes(Doc)) {
-                ValuesFromNode Values = ExtractValuesFromNode(Node);
+                ValuesFromNode Values = ExtractValuesFromNode(Node, newDirectoryName);
                 
                 Node.SetAttributeValue("src", Values.FileName);
                 if (ReturnValue.ContainsBinaryReference(Values.AtributeValue))
@@ -34,11 +34,17 @@ namespace NewsletterSaver {
             return doc.DocumentNode.Descendants("img");
         }
 
-        private ValuesFromNode ExtractValuesFromNode(HtmlNode node) {
+        private ValuesFromNode ExtractValuesFromNode(HtmlNode node, string newDirectoryName) {
             string Atrb = node.GetAttributeValue("src", null);
-            string FileName = Path.GetFileName(Atrb);
-            var BinaryValue = _WebFacade.GetBinaryRemoteFile(Atrb);
-            
+            string FileName = Path.Combine (newDirectoryName,Path.GetFileName(Atrb));
+            byte[]  BinaryValue;
+            try {
+                BinaryValue = _WebFacade.GetBinaryRemoteFile(Atrb);
+            }
+            catch {
+                BinaryValue = new byte[] {};
+            }
+
             return new ValuesFromNode(Atrb, BinaryValue, FileName);
         }
     }

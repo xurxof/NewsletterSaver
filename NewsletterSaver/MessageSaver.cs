@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using SystemWrapper.IO;
 
 namespace NewsletterSaver {
@@ -6,43 +7,69 @@ namespace NewsletterSaver {
 
         private readonly string _DestinyPath;
         private readonly IPathWrap _Path;
+        private readonly HtmlRemoteToLocalConverter _HtmlConverter;
 
 
-        public MessageSaver(IFileWrap file) {
-            _File = file;
-        }
-
-        public MessageSaver(IFileWrap file, string destinyPath, IPathWrap path) {
+        public MessageSaver(IFileWrap file, string destinyPath, IPathWrap path, HtmlRemoteToLocalConverter htmlConverter) {
             _File = file;
             _DestinyPath = destinyPath;
             _Path = path;
+            _HtmlConverter = htmlConverter;
         }
 
-        public string Save(IStructuredMessage message) {
+        private string Save(IMessage message) {
             if (message == null) {
                 return null;
             }
-            string FileName = GetFilePath(_DestinyPath, message);
-            _File.WriteAllText(FileName, message.Text);
+            string FileName = GetFilePath(message);
+            if (_File.Exists(FileName))
+                return FileName;
+            if (message.IsHtml) {
+                IInMemoryDoc Converted = _HtmlConverter.Convert(message.Text, GetValidDirectoryName(message.Title)+"_files");
+                _File.WriteAllText(FileName, Converted.Text);
+                foreach (BinaryReference BinaryReference in Converted.BinaryReferences) {
+                    SaveBinaryReference(BinaryReference);
+                }
+            }
+            else {
+                _File.WriteAllText(FileName, message.Text);
+            }
             return FileName;
         }
 
-        private string GetFilePath(string destinyDir, IStructuredMessage message) {
-            string Extension = null;
-            if (message.Content == ContentsTypes.Text) {
-                Extension = "txt";
+        private void SaveBinaryReference(BinaryReference BinaryReference) {
+            var LocalDirectory = _Path.GetDirectoryName(BinaryReference.NewLocalLink);
+            if (!System.IO.Directory.Exists(LocalDirectory)) {
+                System.IO.Directory.CreateDirectory(LocalDirectory);
             }
-            if (message.Content == ContentsTypes.Html) {
-                Extension = "html";
-            }
-            string ValidTitle = message.Title;
+            _File.WriteAllBytes(BinaryReference.NewLocalLink, BinaryReference.BinaryValue);
+        }
+
+
+        private string GetFilePath(IMessage message) {
+            string Extension ;
+            Extension = message.IsHtml ? "html" : "txt";
+
+            return GetValidDirectoryName(message.Title) + "." + Extension;
+        }
+
+        private string GetValidDirectoryName(string messageSubject) {
+            string ValidTitle = messageSubject;
             foreach (char InvalidChar in _Path.GetInvalidFileNameChars()) {
                 ValidTitle = ValidTitle.Replace(InvalidChar, '_');
             }
+            return _Path.Combine(_DestinyPath, ValidTitle);
+        }
 
-            string FullPath = _Path.Combine(destinyDir, ValidTitle + "." + Extension);
-
-            return FullPath;
+        internal string[] Save(IEnumerable<IMessage> mails) {
+            if (mails == null) {
+                return new string[] {};
+            }
+            var FileNames = new List<string>();
+            foreach (IMessage Message in mails) {
+                FileNames.Add(Save(Message));
+            }
+            return FileNames.ToArray();
         }
     }
 }

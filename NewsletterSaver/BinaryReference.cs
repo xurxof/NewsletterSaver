@@ -16,7 +16,7 @@ namespace NewsletterSaver {
             }
         }
 
-        public string NewRealtiveLocalLink {
+        public string NewLocalLink {
             get {
                 return _LocalFilename;
             }

@@ -21,7 +21,7 @@ namespace NewsletterSaver {
                 DateTimeFilter = _DateTime.Now.DateTimeInstance.AddHours(-24);
             else
                 DateTimeFilter = datetime.Value;
-            return _Client.GetMessagesAfter(DateTimeFilter).Where(m=>_Filter.IsHeaderAccepted( m.GetMessageHeaders()));
+            return _Client.GetMessagesAfter(DateTimeFilter).Where(m=>_Filter.IsMessageAccepted( m));
         }
     }
 }
