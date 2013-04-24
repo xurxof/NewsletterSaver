@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using SystemWrapper;
-using NewsletterSaver.Tests;
 
 namespace NewsletterSaver {
     internal sealed class MailReader {

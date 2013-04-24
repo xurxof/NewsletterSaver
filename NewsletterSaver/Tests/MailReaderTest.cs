@@ -11,9 +11,9 @@ namespace NewsletterSaver.Tests {
         [Test]
         public void GetUnreadMails_IfNotUnreadMailExists_ReturnsEmptyEnumeration() {
 
-            Pop3ClientStub PopClient = new Pop3ClientStub();
-            var dateTime = GetDateTimeStrub("01/01/2013");
-            MailReader Reader = new MailReader(PopClient, new MailFilterFake(), dateTime.Object);
+            MailClientStub PopClient = new MailClientStub();
+            var DateTime = GetDateTimeStrub("01/01/2013");
+            MailReader Reader = new MailReader(PopClient, new MailFilterFake(), DateTime.Object);
             IEnumerable<IMessage> Emails = Reader.GetUnreadMails(null);
             Assert.AreEqual(0, Emails.Count());
 
@@ -30,9 +30,9 @@ namespace NewsletterSaver.Tests {
         public void GetUnreadMail_ThereAreOneMail_ReturnsTheMail() {
             string ValidEmail = "pepejuan@gmail.com";
             var MessageFake = new MessageFake(ValidEmail);
-            Pop3ClientStub PopClient = new Pop3ClientStub(MessageFake);
-            var dateTime = GetDateTimeStrub("01/01/2013");
-            MailReader Reader = new MailReader(PopClient, new MailFilterFake(ValidEmail), dateTime.Object);
+            MailClientStub PopClient = new MailClientStub(MessageFake);
+            var DateTime = GetDateTimeStrub("01/01/2013");
+            MailReader Reader = new MailReader(PopClient, new MailFilterFake(ValidEmail), DateTime.Object);
             IEnumerable<IMessage> Emails = Reader.GetUnreadMails(null).ToList();
             Assert.AreEqual(1, Emails.Count());
             Assert.AreSame(MessageFake, Emails.First());
@@ -43,10 +43,10 @@ namespace NewsletterSaver.Tests {
             // arrange
             string ValidFrom = "pepejuan@gmail.com";
             var ValidMessageFake = new MessageFake(ValidFrom);
-            Pop3ClientStub PopClient = new Pop3ClientStub(ValidMessageFake, new MessageFake("other@gmail.com"));
+            MailClientStub PopClient = new MailClientStub(ValidMessageFake, new MessageFake("other@gmail.com"));
 
-            var dateTime = GetDateTimeStrub("01/01/2013");
-            MailReader Reader = new MailReader(PopClient, new MailFilterFake(ValidFrom), dateTime.Object);
+            var DateTime = GetDateTimeStrub("01/01/2013");
+            MailReader Reader = new MailReader(PopClient, new MailFilterFake(ValidFrom), DateTime.Object);
             // action
             IEnumerable<IMessage> Emails = Reader.GetUnreadMails(null).ToList();
             // assert
@@ -55,9 +55,9 @@ namespace NewsletterSaver.Tests {
         }
 
 
-        private sealed class Pop3ClientStub:IMailClient {
+        private sealed class MailClientStub:IMailClient {
             private readonly List<IMessage> _InnerList = new List<IMessage>();
-            public Pop3ClientStub(params IMessage[] mesagge) {
+            public MailClientStub(params IMessage[] mesagge) {
                 foreach (var Message in mesagge) {
                     _InnerList.Add(Message);
                 }

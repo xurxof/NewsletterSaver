@@ -34,22 +34,22 @@ namespace NewsletterSaver {
 
         private void SetPropertyValue(string key, string value) {
             switch (key) {
-                case "popPass":
+                case "imapPass":
                     _PopPass = value;
                     break;
-                case "popPort":
+                case "imapPort":
                     _PopPort = int.Parse(value);
                     break;
                 case "savePath":
                     _SavePath = value;
                     break;
-                case "popUser":
+                case "imapUser":
                     _PopUser = value;
                     break;
-                case "popHost":
+                case "imapHost":
                     _PopHost = value;
                     break;
-                case "popUseSSL":
+                case "imapUseSSL":
                     _PopUseSSL = bool.Parse(value);
                     break;
                 case "fromFilter":
