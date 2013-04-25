@@ -25,7 +25,7 @@ namespace NewsletterSaver {
             var mails = _Client.GetMessagesAfter(DateTimeFilter);
             DateTime MaxDate;
             var Enumerable = mails as IMessage[] ?? mails.ToArray();
-            MaxDate = (Enumerable.Any() ? (DateTime) Enumerable.Max(m => m.Date) : DateTime.MinValue);
+            MaxDate = (Enumerable.Any(p=>p.Date!=null) ? (DateTime) Enumerable.Where(p=>p.Date!=null).Max(m => m.Date) : DateTime.MinValue);
 
             return new ReadMailsResult(Enumerable.Where(m => _Filter.IsMessageAccepted(m)), MaxDate);
         }

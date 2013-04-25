@@ -11,33 +11,34 @@ namespace NewsletterSaver {
             _WebFacade = webRequest;
         }
 
-        public IInMemoryDoc Convert(string htmlString, string newDirectoryName) {
+        public IInMemoryDoc Convert(string htmlString, string newSubDirectoryName, string outputDirectory) {
             if (htmlString == null) {
                 return new InMemoryDoc();
             }
             InMemoryDoc ReturnValue = new InMemoryDoc(htmlString);
             HtmlDocument Doc = new HtmlDocument();
             Doc.LoadHtml(htmlString);
-            foreach (HtmlNode Node in GetNodes(Doc)) {
-                ValuesFromNode Values = ExtractValuesFromNode(Node, newDirectoryName);
+            foreach (HtmlNode Node in GetImageNodes(Doc)) {
+                ValuesFromNode Values = ExtractValuesFromNode(Node, newSubDirectoryName);
 
                 Node.SetAttributeValue("src", Values.FileName);
                 if (ReturnValue.ContainsBinaryReference(Values.AtributeValue)) {
                     continue;
                 }
-                BinaryReference BinaryReference = new BinaryReference(Values.AtributeValue, Values.FileName, Values.BinaryValue);
+                BinaryReference BinaryReference = new BinaryReference(Values.AtributeValue, Path.Combine (outputDirectory,Values.FileName), Values.BinaryValue);
                 ReturnValue.AddBinaryReference(BinaryReference);
             }
+            ReturnValue.Text = Doc.DocumentNode.InnerHtml;
             return ReturnValue;
         }
 
-        private IEnumerable<HtmlNode> GetNodes(HtmlDocument doc) {
+        private IEnumerable<HtmlNode> GetImageNodes(HtmlDocument doc) {
             return doc.DocumentNode.Descendants("img");
         }
 
         private ValuesFromNode ExtractValuesFromNode(HtmlNode node, string newDirectoryName) {
             string Atrb = node.GetAttributeValue("src", null);
-            string FileName = Path.Combine(newDirectoryName, Path.GetFileName(Atrb));
+            string FileName = Path.Combine(newDirectoryName, GetLocalFileNameForRemoteImage(Atrb));
             byte[] BinaryValue;
             try {
                 BinaryValue = _WebFacade.GetBinaryRemoteFile(Atrb);
@@ -48,6 +49,18 @@ namespace NewsletterSaver {
             }
 
             return new ValuesFromNode(Atrb, BinaryValue, FileName);
+        }
+
+        private static string GetLocalFileNameForRemoteImage(string atrb) {
+            string Extension = Path.GetExtension(atrb);
+            if (string.IsNullOrWhiteSpace(Extension)) {
+                Extension = ".jpg";
+            }
+            if (Extension.Length > 4) {
+                Extension = Extension.Substring(0, 4);
+            }
+            string LocalFileNameForRemoteImage = Path.GetFileNameWithoutExtension(Path.GetRandomFileName()) + Extension;
+            return LocalFileNameForRemoteImage;
         }
     }
 
@@ -78,7 +91,7 @@ namespace NewsletterSaver {
             _BinaryReferences = new List<BinaryReference>();
         }
 
-        public string Text { get; private set; }
+        public string Text { get; set; }
 
         public IEnumerable<BinaryReference> BinaryReferences {
             get {
