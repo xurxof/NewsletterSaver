@@ -2,9 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using SystemWrapper.IO;
+using NLog;
+
 
 namespace NewsletterSaver {
     internal sealed class MessageSaver {
+        private static readonly Logger _Logger = LogManager.GetCurrentClassLogger();
         private readonly IFileWrap _File;
 
         private readonly string _OutpuDirectory;
@@ -20,35 +23,50 @@ namespace NewsletterSaver {
         }
 
         private string Save(IMessage message) {
+            
             if (message == null) {
+                _Logger.Warn("A 'null' message was attemped to be saved!");
                 return null;
             }
+            
             string FileName = GetOutputFilePath(message);
             if (_File.Exists(FileName)) {
+                _Logger.Warn("File {0} already exists. Mesagge will not be saved", FileName);
                 return FileName;
             }
             if (message.IsHtml) {
-                IInMemoryDoc Converted = _HtmlConverter.Convert(message.Text, GetValidSubDirectory(message.Title) + "_files", _OutpuDirectory);
-                _File.WriteAllText(FileName, Converted.Text);
-                foreach (BinaryReference BinaryReference in Converted.BinaryReferences) {
-                    SaveBinaryReference(BinaryReference);
-                }
+                SaveHtmlMessage(message, FileName);
             }
             else {
-                _File.WriteAllText(FileName, message.Text);
+                SaveTextMessage(message, FileName);
             }
             return FileName;
         }
 
-        private void SaveBinaryReference(BinaryReference BinaryReference) {
-            string LocalDirectory = _PathWrap.GetDirectoryName(BinaryReference.NewLocalLink);
+        private void SaveTextMessage(IMessage message, string FileName) {
+            _Logger.Info("Saving {0}", FileName);
+            _File.WriteAllText(FileName, message.Text);
+        }
+
+        private void SaveHtmlMessage(IMessage message, string FileName) {
+            _Logger.Info("Saving {0} ", FileName);
+            IInMemoryDoc Converted = _HtmlConverter.Convert(message.Text, GetValidSubDirectory(message.Title) + "_files", _OutpuDirectory);
+            _File.WriteAllText(FileName, Converted.Text);
+            foreach (BinaryReference BinaryReference in Converted.BinaryReferences) {
+                SaveBinaryReference(BinaryReference);
+            }
+        }
+
+        private void SaveBinaryReference(BinaryReference binaryReference) {
+            string LocalDirectory = _PathWrap.GetDirectoryName(binaryReference.NewLocalLink);
             try {
                 if (!Directory.Exists(LocalDirectory)) {
                     Directory.CreateDirectory(LocalDirectory);
                 }
-                _File.WriteAllBytes(BinaryReference.NewLocalLink, BinaryReference.BinaryValue);
+                _File.WriteAllBytes(binaryReference.NewLocalLink, binaryReference.BinaryValue);
             }
-            catch (Exception) {
+            catch (Exception ex) {
+                _Logger.Error(String.Format("Exception saving binary file {0}. The exception was ignored.", binaryReference.NewLocalLink),ex);
                 // all the esceptions like file existent, illegal name, etc. are passed; 
                 // binary data is not prioritary
             }

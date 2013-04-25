@@ -2,10 +2,13 @@
 using System.IO;
 using System.Linq;
 using HtmlAgilityPack;
+using NLog;
 
 namespace NewsletterSaver {
     public sealed class HtmlRemoteToLocalConverter {
         private readonly IWebFacade _WebFacade;
+
+        private static readonly Logger _Logger = LogManager.GetCurrentClassLogger();
 
         public HtmlRemoteToLocalConverter(IWebFacade webRequest) {
             _WebFacade = webRequest;
@@ -15,17 +18,20 @@ namespace NewsletterSaver {
             if (htmlString == null) {
                 return new InMemoryDoc();
             }
+
+
             InMemoryDoc ReturnValue = new InMemoryDoc(htmlString);
             HtmlDocument Doc = new HtmlDocument();
             Doc.LoadHtml(htmlString);
             foreach (HtmlNode Node in GetImageNodes(Doc)) {
+                _Logger.Debug("Image node with value {0} was founded.", Node.GetAttributeValue("src", string.Empty));
                 ValuesFromNode Values = ExtractValuesFromNode(Node, newSubDirectoryName);
-
+                _Logger.Debug("New value of node: {0} .", Values.FileName);
                 Node.SetAttributeValue("src", Values.FileName);
                 if (ReturnValue.ContainsBinaryReference(Values.AtributeValue)) {
                     continue;
                 }
-                BinaryReference BinaryReference = new BinaryReference(Values.AtributeValue, Path.Combine (outputDirectory,Values.FileName), Values.BinaryValue);
+                BinaryReference BinaryReference = new BinaryReference(Values.AtributeValue, Path.Combine(outputDirectory, Values.FileName), Values.BinaryValue);
                 ReturnValue.AddBinaryReference(BinaryReference);
             }
             ReturnValue.Text = Doc.DocumentNode.InnerHtml;

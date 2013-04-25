@@ -2,11 +2,15 @@
 using System.Linq;
 using SystemWrapper;
 using SystemWrapper.IO;
+using NLog;
 
 namespace NewsletterSaver {
     internal class Program {
+private static readonly NLog.Logger _Logger = LogManager.GetCurrentClassLogger();
+
         private static void Main(string[] args) {
             try {
+                _Logger.Info("NewsletterSaver started");
                 Config Cfg = new Config(args[0], new FileWrap());
                 InternalConfigManager CfgInternal = new InternalConfigManager(new FileWrap(), new ApllicationWrap());
                 var MaxDate = CfgInternal.GetMaxDate();
@@ -19,9 +23,11 @@ namespace NewsletterSaver {
                 CfgInternal.SaveDate(Result.MaxDate);
             }
             catch (Exception ex) {
-                Console.WriteLine(ex.Message);
-                Console.ReadLine();
+                _Logger.Fatal(ex.Message, ex);
             }
+            _Logger.Info("NewsletterSaver shutdown");
         }
+
+        
     }
 }

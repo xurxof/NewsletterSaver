@@ -1,8 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using NLog;
+
 
 namespace NewsletterSaver {
     public sealed class MailFilter : IMailFilter {
+        private static readonly Logger _Logger = LogManager.GetCurrentClassLogger();
         private readonly IEnumerable<string> _Froms;
 
         public MailFilter(params string[] froms) {
@@ -10,7 +13,10 @@ namespace NewsletterSaver {
         }
 
         public bool IsMessageAccepted(IMessage message) {
-            return _Froms.Any(f => f == message.From || f == message.Sender);
+            var Accepted=_Froms.Any(f => f == message.From || f == message.Sender);
+
+            _Logger.Debug("Mesagge with mails {0} and {1} {2} acepted.", message.From, message.Sender, (Accepted ? "was" : "was not"));
+            return Accepted;
         }
     }
 }

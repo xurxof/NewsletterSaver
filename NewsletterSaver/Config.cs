@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using SystemWrapper.IO;
+using NLog;
+
 
 namespace NewsletterSaver {
     internal sealed class Config {
@@ -12,10 +14,13 @@ namespace NewsletterSaver {
         private bool _ImapUseSSL;
         private string _ImapHost;
 
+        private static readonly Logger _Logger = LogManager.GetCurrentClassLogger();
 
         public Config(string fileName, IFileWrap fileReader) {
+            _Logger.Info("Trying read config in {0}", fileName);
             _FromFilter = new List<string>();
             if(!fileReader.Exists(fileName)) {
+                _Logger.Info("Config file was not founded. Default config will be created ");
                 var DefaultConfigStrings = new[] {"imapUser:pepejuan@gmail.com", "imapPass:password", "imapHost:imap.gmail.com", "imapPort:993", "imapUseSSL:true", @"savePath:c:\mails\", "fromFilter:uno@blabla.com", "fromFilter:dos@blabla.com", "fromFilter:tres@blabla.com"};
                 fileReader.WriteAllLines(fileName, DefaultConfigStrings);
             }
@@ -38,6 +43,8 @@ namespace NewsletterSaver {
         }
 
         private void SetPropertyValue(string key, string value) {
+            
+
             switch (key) {
                 case "imapPass":
                     _ImapPass = value;
@@ -59,6 +66,9 @@ namespace NewsletterSaver {
                     break;
                 case "fromFilter":
                     _FromFilter.Add(value);
+                    break;
+                default:
+                    _Logger.Error("The config key {0} with {1} value was not accepted.", key, value);
                     break;
             }
         }
