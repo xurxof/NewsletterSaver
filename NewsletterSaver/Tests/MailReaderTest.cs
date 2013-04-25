@@ -14,7 +14,7 @@ namespace NewsletterSaver.Tests {
             MailClientStub PopClient = new MailClientStub();
             var DateTime = GetDateTimeStrub("01/01/2013");
             MailReader Reader = new MailReader(PopClient, new MailFilterFake(), DateTime.Object);
-            IEnumerable<IMessage> Emails = Reader.GetUnreadMails(null);
+            IEnumerable<IMessage> Emails = Reader.GetUnreadMails(null).Mails;
             Assert.AreEqual(0, Emails.Count());
 
         }
@@ -33,7 +33,7 @@ namespace NewsletterSaver.Tests {
             MailClientStub PopClient = new MailClientStub(MessageFake);
             var DateTime = GetDateTimeStrub("01/01/2013");
             MailReader Reader = new MailReader(PopClient, new MailFilterFake(ValidEmail), DateTime.Object);
-            IEnumerable<IMessage> Emails = Reader.GetUnreadMails(null).ToList();
+            IEnumerable<IMessage> Emails = Reader.GetUnreadMails(null).Mails.ToList();
             Assert.AreEqual(1, Emails.Count());
             Assert.AreSame(MessageFake, Emails.First());
         }
@@ -48,7 +48,7 @@ namespace NewsletterSaver.Tests {
             var DateTime = GetDateTimeStrub("01/01/2013");
             MailReader Reader = new MailReader(PopClient, new MailFilterFake(ValidFrom), DateTime.Object);
             // action
-            IEnumerable<IMessage> Emails = Reader.GetUnreadMails(null).ToList();
+            IEnumerable<IMessage> Emails = Reader.GetUnreadMails(null).Mails.ToList();
             // assert
             Assert.AreEqual(1, Emails.Count());
             Assert.AreSame(ValidMessageFake, Emails.First());

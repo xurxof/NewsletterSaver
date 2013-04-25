@@ -13,16 +13,10 @@ namespace NewsletterSaver {
                 MailClient Client = new MailClient(Cfg.ImapUseSSL, Cfg.ImapHost, Cfg.ImapUser, Cfg.ImapPass, Cfg.ImapPort);
                 MailFilter Filter = new MailFilter(Cfg.FromFilter.ToArray());
                 MailReader Reader = new MailReader(Client, Filter, new DateTimeWrap());
-                var Mails = Reader.GetUnreadMails(MaxDate);
+                var Result= Reader.GetUnreadMails(MaxDate);
                 MessageSaver Saver = new MessageSaver(new FileWrap(), Cfg.SavePath, new PathWrap(), new HtmlRemoteToLocalConverter(new WebFacade()));
-                var Enumerable = Mails as IMessage[] ?? Mails.ToArray();
-                Saver.Save(Enumerable);
-
-
-                DateTime? NewMaxDate = Enumerable.Max(m => m.Date);
-                if (NewMaxDate.HasValue) {
-                    CfgInternal.SaveDate(NewMaxDate.Value);
-                }
+                Saver.Save(Result.Mails);
+                CfgInternal.SaveDate(Result.MaxDate);
             }
             catch (Exception ex) {
                 Console.WriteLine(ex.Message);

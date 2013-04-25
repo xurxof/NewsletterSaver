@@ -79,6 +79,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Config.cs" />
+    <Compile Include="ReadMailsResult.cs" />
     <Compile Include="Tests\ConfigTest.cs" />
     <Compile Include="MailReader.cs" />
     <Compile Include="IMessage.cs" />

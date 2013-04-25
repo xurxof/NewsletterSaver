@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using System.Collections.Generic;
 using SystemWrapper;
 
 namespace NewsletterSaver {
@@ -15,13 +14,20 @@ namespace NewsletterSaver {
             _DateTime = dateTime;
         }
 
-        public IEnumerable<IMessage> GetUnreadMails(DateTime? datetime) {
+        public ReadMailsResult GetUnreadMails(DateTime? datetime) {
             DateTime DateTimeFilter;
-            if (!datetime.HasValue)
+            if (!datetime.HasValue) {
                 DateTimeFilter = _DateTime.Now.DateTimeInstance.AddHours(-24);
-            else
+            }
+            else {
                 DateTimeFilter = datetime.Value;
-            return _Client.GetMessagesAfter(DateTimeFilter).Where(m=>_Filter.IsMessageAccepted( m));
+            }
+            var mails = _Client.GetMessagesAfter(DateTimeFilter);
+            DateTime MaxDate;
+            var Enumerable = mails as IMessage[] ?? mails.ToArray();
+            MaxDate = (Enumerable.Any() ? (DateTime) Enumerable.Max(m => m.Date) : DateTime.MinValue);
+
+            return new ReadMailsResult(Enumerable.Where(m => _Filter.IsMessageAccepted(m)), MaxDate);
         }
     }
 }

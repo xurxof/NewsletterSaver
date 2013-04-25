@@ -20,28 +20,30 @@ namespace NewsletterSaver {
             Doc.LoadHtml(htmlString);
             foreach (HtmlNode Node in GetNodes(Doc)) {
                 ValuesFromNode Values = ExtractValuesFromNode(Node, newDirectoryName);
-                
+
                 Node.SetAttributeValue("src", Values.FileName);
-                if (ReturnValue.ContainsBinaryReference(Values.AtributeValue))
+                if (ReturnValue.ContainsBinaryReference(Values.AtributeValue)) {
                     continue;
-                var BinaryReference = new BinaryReference(Values.AtributeValue, Values.FileName, Values.BinaryValue);
+                }
+                BinaryReference BinaryReference = new BinaryReference(Values.AtributeValue, Values.FileName, Values.BinaryValue);
                 ReturnValue.AddBinaryReference(BinaryReference);
             }
             return ReturnValue;
         }
 
-        private IEnumerable<HtmlNode>  GetNodes(HtmlDocument doc) {
+        private IEnumerable<HtmlNode> GetNodes(HtmlDocument doc) {
             return doc.DocumentNode.Descendants("img");
         }
 
         private ValuesFromNode ExtractValuesFromNode(HtmlNode node, string newDirectoryName) {
             string Atrb = node.GetAttributeValue("src", null);
-            string FileName = Path.Combine (newDirectoryName,Path.GetFileName(Atrb));
-            byte[]  BinaryValue;
+            string FileName = Path.Combine(newDirectoryName, Path.GetFileName(Atrb));
+            byte[] BinaryValue;
             try {
                 BinaryValue = _WebFacade.GetBinaryRemoteFile(Atrb);
             }
             catch {
+                // all the exceptions are ignored; the references are not prioritary
                 BinaryValue = new byte[] {};
             }
 
@@ -89,7 +91,7 @@ namespace NewsletterSaver {
         }
 
         internal bool ContainsBinaryReference(string originalLink) {
-           return  _BinaryReferences.FirstOrDefault(b => b.OriginalLink == originalLink) != null;
+            return _BinaryReferences.FirstOrDefault(b => b.OriginalLink == originalLink) != null;
         }
     }
 }

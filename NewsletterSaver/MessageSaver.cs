@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using SystemWrapper.IO;
 
 namespace NewsletterSaver {
@@ -22,10 +23,11 @@ namespace NewsletterSaver {
                 return null;
             }
             string FileName = GetFilePath(message);
-            if (_File.Exists(FileName))
+            if (_File.Exists(FileName)) {
                 return FileName;
+            }
             if (message.IsHtml) {
-                IInMemoryDoc Converted = _HtmlConverter.Convert(message.Text, GetValidDirectoryName(message.Title)+"_files");
+                IInMemoryDoc Converted = _HtmlConverter.Convert(message.Text, GetValidDirectoryName(message.Title) + "_files");
                 _File.WriteAllText(FileName, Converted.Text);
                 foreach (BinaryReference BinaryReference in Converted.BinaryReferences) {
                     SaveBinaryReference(BinaryReference);
@@ -38,16 +40,21 @@ namespace NewsletterSaver {
         }
 
         private void SaveBinaryReference(BinaryReference BinaryReference) {
-            var LocalDirectory = _Path.GetDirectoryName(BinaryReference.NewLocalLink);
-            if (!System.IO.Directory.Exists(LocalDirectory)) {
-                System.IO.Directory.CreateDirectory(LocalDirectory);
+            string LocalDirectory = _Path.GetDirectoryName(BinaryReference.NewLocalLink);
+            try {
+                if (!Directory.Exists(LocalDirectory)) {
+                    Directory.CreateDirectory(LocalDirectory);
+                }
+                _File.WriteAllBytes(BinaryReference.NewLocalLink, BinaryReference.BinaryValue);
             }
-            _File.WriteAllBytes(BinaryReference.NewLocalLink, BinaryReference.BinaryValue);
+            catch (IOException) {
+                // all the esceptions like file existent, etc. is passed; binary data is not prioritary
+            }
         }
 
 
         private string GetFilePath(IMessage message) {
-            string Extension ;
+            string Extension;
             Extension = message.IsHtml ? "html" : "txt";
 
             return GetValidDirectoryName(message.Title) + "." + Extension;

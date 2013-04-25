@@ -6,7 +6,7 @@ namespace NewsletterSaver {
         private readonly IEnumerable<string> _Froms;
 
         public MailFilter(params string[] froms) {
-            _Froms = froms.Where(f => !string.IsNullOrWhiteSpace(f));
+            _Froms = froms.Where(f => !string.IsNullOrWhiteSpace(f)).Select (f=>f.TrimEnd(' ').TrimStart(' '));
         }
 
         public bool IsMessageAccepted(IMessage message) {
