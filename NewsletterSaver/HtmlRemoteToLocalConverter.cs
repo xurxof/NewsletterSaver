@@ -14,7 +14,7 @@ namespace NewsletterSaver {
             _WebFacade = webRequest;
         }
 
-        public IInMemoryDoc Convert(string htmlString, string newSubDirectoryName, string outputDirectory) {
+        public IInMemoryDoc Convert(string htmlString, string newSubDirectoryName, string outputDirectory, string newTitle) {
             if (htmlString == null) {
                 return new InMemoryDoc();
             }
@@ -23,6 +23,10 @@ namespace NewsletterSaver {
             InMemoryDoc ReturnValue = new InMemoryDoc(htmlString);
             HtmlDocument Doc = new HtmlDocument();
             Doc.LoadHtml(htmlString);
+            var TitleNode = Doc.DocumentNode.Descendants("title").FirstOrDefault() ;
+            if (TitleNode != null) {
+                Doc.DocumentNode.InnerHtml = Doc.DocumentNode.InnerHtml.Replace(TitleNode.InnerHtml, "<title>"+newTitle+"</titlel>");
+            }
             foreach (HtmlNode Node in GetImageNodes(Doc)) {
                 _Logger.Debug("Image node with value {0} was founded.", Node.GetAttributeValue("src", string.Empty));
                 ValuesFromNode Values = ExtractValuesFromNode(Node, newSubDirectoryName);

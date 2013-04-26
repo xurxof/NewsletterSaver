@@ -50,7 +50,7 @@ namespace NewsletterSaver {
 
         private void SaveHtmlMessage(IMessage message, string FileName) {
             _Logger.Info("Saving {0} ", FileName);
-            IInMemoryDoc Converted = _HtmlConverter.Convert(message.Text, GetValidSubDirectory(message.Title) + "_files", _OutpuDirectory);
+            IInMemoryDoc Converted = _HtmlConverter.Convert(message.Text, GetValidSubDirectory(message.Title) + "_files", _OutpuDirectory, message.Title);
             _File.WriteAllText(FileName, Converted.Text);
             foreach (BinaryReference BinaryReference in Converted.BinaryReferences) {
                 SaveBinaryReference(BinaryReference);

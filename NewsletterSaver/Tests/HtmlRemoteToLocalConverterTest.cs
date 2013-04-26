@@ -11,7 +11,7 @@ namespace NewsletterSaver.Tests {
             // arrange
             HtmlRemoteToLocalConverter Converter = new HtmlRemoteToLocalConverter(null);
             // action
-            var MemoryDoc = Converter.Convert(null, "",@"C:\tmp");
+            var MemoryDoc = Converter.Convert(null, "",@"C:\tmp","title");
             // assert
             Assert.IsNull(MemoryDoc.Text);
             Assert.AreEqual(0, MemoryDoc.BinaryReferences.Count());
@@ -24,7 +24,7 @@ namespace NewsletterSaver.Tests {
             HtmlRemoteToLocalConverter Converter = new HtmlRemoteToLocalConverter(null);
             string SimpleHtml = @"<!DOCTYPE html><html><body><h1>My First Heading</h1><p>My first paragraph.</p></body></html>";
             // action
-            var MemoryDoc = Converter.Convert(SimpleHtml, "",@"C:\tmp");
+            var MemoryDoc = Converter.Convert(SimpleHtml, "", @"C:\tmp", "title");
             // assert
             Assert.AreEqual(SimpleHtml,MemoryDoc.Text);
             Assert.AreEqual(0, MemoryDoc.BinaryReferences.Count());
@@ -41,7 +41,7 @@ namespace NewsletterSaver.Tests {
             string SimpleHtml = @"<!DOCTYPE html><html><body><h1>My First Heading</h1><p>My first paragraph.</p><img src=""w3schools.jpg"" width=""104"" height=""142""></body></body></html>";
             
             // action
-            var MemoryDoc = Converter.Convert(SimpleHtml, "",@"C:\tmp");
+            var MemoryDoc = Converter.Convert(SimpleHtml, "", @"C:\tmp", "title");
             // assert
             Assert.AreEqual(SimpleHtml, MemoryDoc.Text);
             Assert.AreEqual(1, MemoryDoc.BinaryReferences.Count());
@@ -60,7 +60,7 @@ namespace NewsletterSaver.Tests {
             string SimpleHtml = @"<!DOCTYPE html><html><body><h1>My First Heading</h1><p>My first paragraph.</p><img src=""w3schools.jpg"" width=""104"" height=""142""><img src=""w3schools.jpg"" width=""104"" height=""142""></body></body></html>";
 
             // action
-            var MemoryDoc = Converter.Convert(SimpleHtml, "", @"C:\tmp");
+            var MemoryDoc = Converter.Convert(SimpleHtml, "", @"C:\tmp","title");
             // assert
             Assert.AreEqual(SimpleHtml, MemoryDoc.Text);
             Assert.AreEqual(1, MemoryDoc.BinaryReferences.Count());
