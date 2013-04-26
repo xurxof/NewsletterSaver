@@ -22,8 +22,9 @@ namespace NewsletterSaver {
 
         public IEnumerable<IMessage> GetMessagesAfter(DateTime minDateTime) {
             var MessageList = new List<IMessage>();
+            
             using (ImapClient Imap = new ImapClient(_Host, _Username, _Password, ImapClient.AuthMethods.Login, _Port, _IsSSL)) {
-                var Messages = Imap.SearchMessages(SearchCondition.Undeleted().And(SearchCondition.SentSince(minDateTime))).ToArray ();
+                var Messages = Imap.SearchMessages(SearchCondition.SentSince(minDateTime)).ToArray ();
                 foreach (var ImapMessage in Messages) {
                     //Message.Value.Load(Message.Value.Uid);
 
