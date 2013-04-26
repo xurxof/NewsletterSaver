@@ -24,14 +24,16 @@ namespace NewsletterSaver {
             var MessageList = new List<IMessage>();
             
             using (ImapClient Imap = new ImapClient(_Host, _Username, _Password, ImapClient.AuthMethods.Login, _Port, _IsSSL)) {
-                var Messages = Imap.SearchMessages(SearchCondition.SentSince(minDateTime)).ToArray ();
+                var Messages = Imap.SearchMessages(SearchCondition.SentSince(minDateTime.AddDays(-1))).ToArray ();
                 foreach (var ImapMessage in Messages) {
-                    //Message.Value.Load(Message.Value.Uid);
+                    DateTime date = ImapMessage.Value.Date;
+                    if (date < minDateTime) continue;
 
-                    string from = ImapMessage.Value.From == null ? "" : ImapMessage.Value.From.Address;//  Message.Value.Headers.ContainsKey("From") ? Message.Value.Headers["From"].Value : "";
-                    string sender = ImapMessage.Value.Sender== null? "":ImapMessage.Value.Sender.Address; 
-                    string subject = ImapMessage.Value.Subject;// Headers.ContainsKey("Subject") ? Message.Value.Headers["Subject"].Value : "";
-                    DateTime date = ImapMessage.Value.Date; //  Headers.ContainsKey("Date") ? DateTime.Parse(Message.Value.Headers["Date"].Value) : DateTime.MinValue;
+                    string from = ImapMessage.Value.From == null ? "" : ImapMessage.Value.From.Address;
+                    string sender = ImapMessage.Value.Sender== null? "":ImapMessage.Value.Sender.Address;
+                    string subject = ImapMessage.Value.Subject; 
+
+                    
                     
                     string body;
                     var htmlAlternateView = ImapMessage.Value.AlternateViews.FirstOrDefault(a => a.ContentType == "text/html");
