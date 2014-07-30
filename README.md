@@ -5,7 +5,7 @@ NewsletterSaver is a mail dumper for converter selected mails in local html file
 
 You can configure the program with a config file. You must indicate the file path to the config file.
 
-  	newsletteraaver.exe c:\tmp\config.cfg
+  	newslettersaver.exe c:\tmp\config.cfg
 
 You can use NLog.config file to config log output. See [NLog] (nlog-project.org/) for further information.
 
